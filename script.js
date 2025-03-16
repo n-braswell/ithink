@@ -212,6 +212,13 @@ class Writer {
             this.togglePreviewPanel();
             return;
         }
+
+        // Add download hotkey (Ctrl + S)
+        if (e.ctrlKey && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            this.downloadAsDocx();
+            return;
+        }
     }
 
     adjustTextareaHeight() {
@@ -335,7 +342,8 @@ class Writer {
             { combo: 'Ctrl + P', action: 'New Paragraph' },
             { combo: 'Ctrl + [', action: 'Previous Paragraph' },
             { combo: 'Ctrl + ]', action: 'Next Paragraph' },
-            { combo: 'Ctrl + V', action: 'Toggle Preview' }
+            { combo: 'Ctrl + V', action: 'Toggle Preview' },
+            { combo: 'Ctrl + S', action: 'Download Document' }
         ];
 
         // Clear existing items
@@ -438,7 +446,8 @@ class Writer {
             { combo: 'Ctrl + P', action: 'New Paragraph' },
             { combo: 'Ctrl + [', action: 'Previous Paragraph' },
             { combo: 'Ctrl + ]', action: 'Next Paragraph' },
-            { combo: 'Ctrl + V', action: 'Toggle Preview' }
+            { combo: 'Ctrl + V', action: 'Toggle Preview' },
+            { combo: 'Ctrl + S', action: 'Download Document' }
         ];
         // ... update helper with new hotkeys ...
     }
@@ -467,6 +476,44 @@ class Writer {
             paragraphDiv.textContent = paragraphText;
             this.previewContent.appendChild(paragraphDiv);
         });
+    }
+
+    async downloadAsDocx() {
+        try {
+            // Format the text with proper paragraphs
+            const formattedText = this.paragraphs
+                .map(paragraph => paragraph.join(' '))
+                .join('\n\n');
+
+            // Create the request
+            const response = await fetch('https://ithink-37ij.onrender.com/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: formattedText }),
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            // Get the blob from response
+            const blob = await response.blob();
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'ithink_notes.docx';
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Cleanup
+            URL.revokeObjectURL(link.href);
+        } catch (error) {
+            console.error('Error downloading document:', error);
+        }
     }
 }
 
