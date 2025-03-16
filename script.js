@@ -491,26 +491,22 @@ class Writer {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ text: formattedText }),
+                body: JSON.stringify({ text: formattedText })
             });
 
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) {
+                throw new Error('Download failed');
+            }
 
-            // Get the blob from response
             const blob = await response.blob();
-            
-            // Create download link
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'ithink_notes.docx';
-            
-            // Trigger download
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Cleanup
-            URL.revokeObjectURL(link.href);
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ithink_notes.docx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
         } catch (error) {
             console.error('Error downloading document:', error);
         }
