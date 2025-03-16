@@ -1,6 +1,6 @@
 class Writer {
     constructor() {
-        this.paragraphs = [[]];  // Array of paragraph arrays
+        this.paragraphs = [];
         this.currentParagraph = 0;
         this.currentIndex = 0;
         this.display = document.getElementById('sentence-display');
@@ -9,8 +9,8 @@ class Writer {
         this.isTransitioning = false;
         this.setupIndicators();
         this.setupEventListeners();
-        this.loadText();
-        this.autoSaveInterval = setInterval(() => this.saveText(), 3000);
+        this.loadFromLocalStorage();
+        this.autoSaveInterval = setInterval(() => this.saveToLocalStorage(), 3000);
         this.adjustTextareaHeight();
         this.setupHotkeyHelper();
         this.setupParagraphIndicators();
@@ -114,7 +114,7 @@ class Writer {
                         this.input.value = this.paragraphs[this.currentParagraph][this.currentIndex];
                         this.adjustTextareaHeight();
                     }
-                    this.saveText();
+                    this.saveToLocalStorage();
                 });
             }
             return;
@@ -151,6 +151,13 @@ class Writer {
             return;
         }
 
+        // Add clear workspace hotkey (Ctrl + Shift + C)
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+            e.preventDefault();
+            this.clearWorkspace();
+            return;
+        }
+
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             const text = this.input.value.trim();
@@ -169,7 +176,7 @@ class Writer {
                         this.input.value = this.paragraphs[this.currentParagraph][this.currentIndex];
                         this.adjustTextareaHeight();
                     }
-                    this.saveText();
+                    this.saveToLocalStorage();
                 });
                 return;
             }
@@ -196,7 +203,7 @@ class Writer {
                     this.updateIndicators();
                 });
                 
-                this.saveText();
+                this.saveToLocalStorage();
             }
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
@@ -230,32 +237,35 @@ class Writer {
         });
     }
 
-    async loadText() {
-        this.paragraphs = [[]];
-        this.currentParagraph = 0;
-        this.currentIndex = 0;
-        this.updateDisplay();
+    loadFromLocalStorage() {
+        const savedData = localStorage.getItem('ithink-content');
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                this.paragraphs = data.paragraphs || [[]];
+                this.currentParagraph = data.currentParagraph || 0;
+                this.currentIndex = data.currentIndex || 0;
+                this.updateDisplay();
+            } catch (error) {
+                console.error('Error loading saved content:', error);
+                this.paragraphs = [[]];
+                this.currentParagraph = 0;
+                this.currentIndex = 0;
+            }
+        } else {
+            this.paragraphs = [[]];
+            this.currentParagraph = 0;
+            this.currentIndex = 0;
+        }
     }
 
-    async saveText() {
-        if (this.paragraphs.length === 0) return;
-
-        try {
-            const response = await fetch('https://ithink-37ij.onrender.com/save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    text: this.paragraphs.map(paragraph => paragraph.join(' ')).join('\n'),
-                }),
-            });
-
-            if (!response.ok) throw new Error('Network response was not ok');
-        } catch (error) {
-            console.error('Error saving text:', error);
-            // Silently fail - don't disrupt the user experience
-        }
+    saveToLocalStorage() {
+        const data = {
+            paragraphs: this.paragraphs,
+            currentParagraph: this.currentParagraph,
+            currentIndex: this.currentIndex
+        };
+        localStorage.setItem('ithink-content', JSON.stringify(data));
     }
 
     addSentence(text) {
@@ -270,6 +280,7 @@ class Writer {
                 this.updatePreviewContent();
             }
         });
+        this.saveToLocalStorage();
     }
 
     navigateSentences(direction) {
@@ -343,7 +354,8 @@ class Writer {
             { combo: 'Ctrl + [', action: 'Previous Paragraph' },
             { combo: 'Ctrl + ]', action: 'Next Paragraph' },
             { combo: 'Ctrl + V', action: 'Toggle Preview' },
-            { combo: 'Ctrl + S', action: 'Download Document' }
+            { combo: 'Ctrl + S', action: 'Download Document' },
+            { combo: 'Ctrl + Shift + C', action: 'Clear Workspace' }
         ];
 
         // Clear existing items
@@ -447,7 +459,8 @@ class Writer {
             { combo: 'Ctrl + [', action: 'Previous Paragraph' },
             { combo: 'Ctrl + ]', action: 'Next Paragraph' },
             { combo: 'Ctrl + V', action: 'Toggle Preview' },
-            { combo: 'Ctrl + S', action: 'Download Document' }
+            { combo: 'Ctrl + S', action: 'Download Document' },
+            { combo: 'Ctrl + Shift + C', action: 'Clear Workspace' }
         ];
         // ... update helper with new hotkeys ...
     }
@@ -499,6 +512,17 @@ class Writer {
             document.body.removeChild(a);
         } catch (error) {
             console.error('Error downloading document:', error);
+        }
+    }
+
+    clearWorkspace() {
+        if (confirm('Are you sure you want to clear the workspace? This cannot be undone.')) {
+            this.paragraphs = [[]];
+            this.currentParagraph = 0;
+            this.currentIndex = 0;
+            this.input.value = '';
+            this.saveToLocalStorage();
+            this.updateDisplay();
         }
     }
 }
