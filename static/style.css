@@ -1,0 +1,60 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1e1e1e;
+    color: #e6e1cf;
+    font-family: 'Courier Prime', monospace;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#writing-container {
+    width: 100%;
+    max-width: 800px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+#sentence-display {
+    font-size: 2rem;
+    line-height: 1.5;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#sentence-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #e6e1cf;
+    font-family: 'Courier Prime', monospace;
+    font-size: 2rem;
+    text-align: center;
+    outline: none;
+    resize: none;
+    height: 150px;
+    padding: 1rem;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+.fade-in {
+    opacity: 1;
+} 
