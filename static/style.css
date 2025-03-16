@@ -1,24 +1,33 @@
+:root {
+    --bg-color: #1e1e1e;
+    --text-color: #e6e1cf;
+    --text-muted: rgba(230, 225, 207, 0.6);
+    --font-family: 'IBM Plex Mono', monospace;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    background-color: #1e1e1e;
-    color: #e6e1cf;
-    font-family: 'Courier Prime', monospace;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+html, body {
+    height: 100%;
     overflow: hidden;
 }
 
-#writing-container {
-    width: 100%;
-    max-width: 800px;
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#writing-space {
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -30,31 +39,72 @@ body {
     font-size: 2rem;
     line-height: 1.5;
     text-align: center;
-    min-height: 200px;
+    min-height: 6rem;
+    max-width: 800px;
+    margin-bottom: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.3s ease-in-out;
+    color: var(--text-muted);
+    transition: all 0.3s ease-out;
+}
+
+#input-container {
+    width: 100%;
+    max-width: 800px;
+    position: relative;
 }
 
 #sentence-input {
     width: 100%;
     background: transparent;
     border: none;
-    color: #e6e1cf;
-    font-family: 'Courier Prime', monospace;
+    color: var(--text-color);
+    font-family: var(--font-family);
     font-size: 2rem;
+    line-height: 1.5;
     text-align: center;
     outline: none;
     resize: none;
-    height: 150px;
     padding: 1rem;
+    overflow: hidden;
+    transition: all 0.2s ease-out;
+}
+
+#sentence-input:focus {
+    outline: none;
 }
 
 .fade-out {
     opacity: 0;
+    transform: translateY(-20px);
 }
 
 .fade-in {
     opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom scrollbar for modern browsers */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(230, 225, 207, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(230, 225, 207, 0.3);
+}
+
+/* Selection styling */
+::selection {
+    background: rgba(230, 225, 207, 0.2);
+    color: var(--text-color);
 } 

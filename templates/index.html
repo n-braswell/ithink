@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iThink - Minimalist Writing</title>
+    <meta name="description" content="iThink - A minimalist writing space for focused thoughts">
+    <title>iThink</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="writing-container">
-        <div id="sentence-display"></div>
-        <textarea id="sentence-input" autofocus></textarea>
-    </div>
+    <main id="writing-space">
+        <div id="sentence-display" class="fade-in"></div>
+        <div id="input-container">
+            <textarea id="sentence-input" rows="1" autofocus></textarea>
+        </div>
+    </main>
     <script src="/static/script.js"></script>
 </body>
 </html> 
