@@ -30,7 +30,7 @@ class Writer {
 
     async loadText() {
         try {
-            const response = await fetch('http://localhost:5000/load');
+            const response = await fetch('https://ithink-37ij.onrender.com/load');
             const data = await response.json();
             if (data.text) {
                 this.sentences = data.text.split(/[.!?]+/).filter(s => s.trim());
@@ -44,7 +44,7 @@ class Writer {
 
     async saveText() {
         try {
-            await fetch('http://localhost:5000/save', {
+            await fetch('https://ithink-37ij.onrender.com/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
