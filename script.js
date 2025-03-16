@@ -480,29 +480,19 @@ class Writer {
 
     async downloadAsDocx() {
         try {
-            // Format the text with proper paragraphs
+            // Get the current text content
             const formattedText = this.paragraphs
                 .map(paragraph => paragraph.join(' '))
                 .join('\n\n');
 
-            // Create the request
-            const response = await fetch('https://ithink-37ij.onrender.com/download', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ text: formattedText })
-            });
-
-            if (!response.ok) {
-                throw new Error('Download failed');
-            }
-
-            const blob = await response.blob();
+            // Create a blob with the text content
+            const blob = new Blob([formattedText], { type: 'text/plain' });
+            
+            // Create and trigger download
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'ithink_notes.docx';
+            a.download = 'ithink_notes.txt';  // Changed to .txt for now
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
